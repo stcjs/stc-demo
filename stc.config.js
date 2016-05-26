@@ -1,4 +1,5 @@
 var stc = require('stc');
+var babel = require('stc-babel');
 
 stc.config({
   template: {
@@ -9,6 +10,10 @@ stc.config({
     exclude: []
   }
 });
+
+stc.transpile({
+  babel: {plugin: babel, include: /src\/.*?\.js$/}
+})
 
 stc.workflow();
 
