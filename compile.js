@@ -14,7 +14,8 @@ var list = [
     '../stc-file',
     '../stc-helper',
     '../stc-plugin',
-    '../stc-typescript'
+    '../stc-typescript',
+    '../stc-plugin-invoke'
 ];
 
 list.forEach(function(dir) {
