@@ -1,5 +1,6 @@
 var stc = require('stc');
 var babel = require('stc-babel');
+var ts = require('stc-typescript');
 
 stc.config({
   template: {
@@ -12,7 +13,8 @@ stc.config({
 });
 
 stc.transpile({
-  babel: {plugin: babel, include: /src\/.*?\.js$/}
+  babel: {plugin: babel, include: /src\/.*?\.js$/},
+  ts: {plugin: ts, include: /src\/.*?\.ts/}
 })
 
 stc.workflow();
