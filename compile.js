@@ -35,15 +35,19 @@ list.forEach(function(dir) {
 function compileFile(sourcePath, targetPath, changedPath) {
   console.log('compile file ', changedPath);
   var content = fs.readFileSync(changedPath, 'utf8');
-  var data = babel.transform(content, {
-    filename: changedPath,
-    presets: ['es2015-loose', 'stage-1'],
-    plugins: ['transform-runtime'],
-    sourceMaps: false,
-    sourceFileName: changedPath
-  });
-  let file = changedPath.substr(sourcePath.length + 1);
-  var saveFile = path.join(targetPath, file);
-  think.mkdir(path.dirname(saveFile));
-  fs.writeFileSync(saveFile, data.code);
+  try{
+    var data = babel.transform(content, {
+      filename: changedPath,
+      presets: ['es2015-loose', 'stage-1'],
+      plugins: ['transform-runtime'],
+      sourceMaps: false,
+      sourceFileName: changedPath
+    });
+    let file = changedPath.substr(sourcePath.length + 1);
+    var saveFile = path.join(targetPath, file);
+    think.mkdir(path.dirname(saveFile));
+    fs.writeFileSync(saveFile, data.code);
+  }catch(e){
+    console.error(e.stack); 
+  }
 }
