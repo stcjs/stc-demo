@@ -10,12 +10,14 @@ var list = [
     '../stc-babel',
     '../stc-cache',
     '../stc-cluster',
-    '../stc-dep',
+    '../stc-dep-parser',
     '../stc-file',
     '../stc-helper',
     '../stc-plugin',
     '../stc-typescript',
-    '../stc-plugin-invoke'
+    '../stc-plugin-invoke',
+    '../stc-uglify',
+    '../flkit'
 ];
 
 list.forEach(function(dir) {
