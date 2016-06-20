@@ -16,57 +16,103 @@ const fs = require("fs"),
 		"stc-helper",
 		"stc-replace",
 		"stc-cli"
-	];
+	],
+	STR_DASH = "========================================",
+	REG_LOCAL = /^stc[\w-]*$/;
 
-var currentJob = "";
+var currentJob = "",
+	totalPassed = 0;
 
-execPromise("mkdir stcjs")
-	.then(function () {
+Promise.resolve()
+	.then(curryTask("Making stcjs dir"), function() {
+		// todo using `fs.mkdir`
+		return execPromise("mkdir stcjs");
+	})
+	.then(curryTask("Switching folder", function () {
 		process.chdir('stcjs');
 		console.log('Current directory: ' + process.cwd());
-	})
-	.then(function () {
-		currentJob = "Git Cloning";
+	}))
+	.then(curryTask("Git Cloning", function () {
 		return execAll("git clone https://github.com/stcjs/:name/")
-	})
-	.then(function () {
-		currentJob = "making folder node_modules";
+	}))
+	.then(curryTask("Making folder node_modules", function () {
+		// todo using `fs.mkdir`
 		return execPromise("mkdir node_modules");
-	})
-	.then(function () {
-		currentJob = "making soft links for each project";
+	}))
+	.then(curryTask("Making soft links for each project", function () {
+		// todo using `fs.symlink`
 		return execAll(`ln -s ../:name :name`, {
 			cwd: `node_modules`
 		});
-	})
-	.then(function () {
-		currentJob = "installing npm package in stc";
+	}))
+	.then(curryTask("Resolving all `package.json` & generating one", function () {
+		return resolvePackageJSON();
+	}))
+	.then(curryTask("Installing npm package", function () {
 		return execPromise("npm install --registry=https://registry.npm.taobao.org", {
-			cwd: "stc",
 			pipe: true
 		});
-	})
+	}))
 	.then(function () {
-		currentJob = "installing npm package in stc-demo";
-		return execPromise("npm install --registry=https://registry.npm.taobao.org", {
-			cwd: "stc-demo",
-			pipe: true
-		});
-	})
-	.then(function () {
-		console.log(`========================================`);
-		console.log(`All done.`);
+		console.log(`${STR_DASH}\nAll done.`);
 	})
 	.catch(function (err) {
-		console.log(`========================================`);
-		console.error(`Error:\t${currentJob}`);
+		console.error(`${STR_DASH}\nError during task: ${currentJob}`);
 		console.error(err);
-		console.log(`========================================`);
 	});
 
+function curryTask(taskName, fn) {
+	return function () {
+		var startTime = +new Date();
+		currentJob = taskName;
+		console.log(`${STR_DASH}\nTask start: ${currentJob}`);
+		return (fn() || Promise.resolve())
+			.then(function () {
+				var passed = new Date() - startTime;
+				totalPassed += passed;
+				console.log(`Task done after: ${passed}ms, total passed time: ${totalPassed}ms.`)
+			});
+	}
+}
+
+function resolvePackageJSON() {
+	var package = {
+		dependencies: {},
+		devDependencies: {}
+	};
+	return Promise.all(
+		modules.map(function (name) {
+			var dir = `${name}/package.json`;
+			return readJSONPromise(dir)
+				.then(function (data) {
+					setKey(data, "dependencies");
+					setKey(data, "devDependencies");
+				})
+				.then(function () {
+					console.log(`Parsed\t${dir}`);
+				})
+				.catch(function (err) {
+					console.log(`Error\t${dir}`);
+					// console.error(err);
+				});
+		})
+	).then(function () {
+		return writeJSONPromise(`package.json`, package);
+	});
+
+	function setKey(data, base) {
+		for (key in data[base]) {
+			if (REG_LOCAL.test(key)) {
+				return;
+			}
+			if (!package[base][key] || package[base][key] > data[base][key]) {
+				package[base][key] = data[base][key];
+			}
+		}
+	}
+}
+
 function execAll(str, options) {
-	console.log(`========================================`);
-	console.log(`Task start:\t${currentJob}`);
 	return Promise.all(
 		modules.map(function (name) {
 			return execPromise(
@@ -74,10 +120,7 @@ function execAll(str, options) {
 				options
 			);
 		})
-	).then(function () {
-		console.log(`Task done:\t${currentJob}`);
-		console.log(`========================================`);
-	});
+	);
 }
 
 function execPromise(cmd, options) {
@@ -97,4 +140,34 @@ function execPromise(cmd, options) {
 	});
 
 	return promise;
+}
+
+function readJSONPromise(file) {
+	return new Promise(function (resolve, reject) {
+		fs.readFile(file, "utf-8", function (err, data) {
+			if (err) {
+				reject(err);
+				return;
+			}
+			resolve(
+				JSON.parse(data.toString())
+			);
+		});
+	});
+}
+
+function writeJSONPromise(file, json) {
+	return new Promise(function (resolve, reject) {
+		fs.writeFile(
+			file,
+			JSON.stringify(json, null, '\t'),
+			"utf-8",
+			function (err, data) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+	});
 }
