@@ -6,23 +6,24 @@ var think = require('thinkit');
 think = think.default || think;
 
 var list = [
-    '../flkit',
-    '../stc',
-    '../stc-babel',
-    '../stc-cache',
-    '../stc-cluster',
-    '../stc-dep-parser',
-    '../stc-file',
-    '../stc-helper',
-    '../stc-plugin',
-    '../stc-typescript',
-    '../stc-plugin-invoke',
-    '../stc-uglify',
-    '../stc-eslint',
-    '../stc-log'
+    'flkit',
+    'stc',
+    'stc-babel',
+    'stc-cache',
+    'stc-cluster',
+    'stc-dep-parser',
+    'stc-file',
+    'stc-helper',
+    'stc-plugin',
+    'stc-typescript',
+    'stc-plugin-invoke',
+    'stc-uglify',
+    'stc-eslint',
+    'stc-log'
 ];
 
 list.forEach(function(dir) {
+  dir = '../' + dir;
   dir = path.join(process.cwd(), dir);
   var sourcePath = path.join(dir, 'src');
   if(!think.isDir(sourcePath)) return;

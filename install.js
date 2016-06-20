@@ -24,10 +24,10 @@ var currentJob = "",
 	totalPassed = 0;
 
 Promise.resolve()
-	.then(curryTask("Making stcjs dir"), function() {
+	.then(curryTask("Making stcjs dir", function() {
 		// todo using `fs.mkdir`
 		return execPromise("mkdir stcjs");
-	})
+	}))
 	.then(curryTask("Switching folder", function () {
 		process.chdir('stcjs');
 		console.log('Current directory: ' + process.cwd());
