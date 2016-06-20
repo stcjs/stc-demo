@@ -6,6 +6,7 @@ var think = require('thinkit');
 think = think.default || think;
 
 var list = [
+    '../flkit',
     '../stc',
     '../stc-babel',
     '../stc-cache',
@@ -17,14 +18,15 @@ var list = [
     '../stc-typescript',
     '../stc-plugin-invoke',
     '../stc-uglify',
-    '../flkit'
+    '../stc-eslint',
+    '../stc-log'
 ];
 
 list.forEach(function(dir) {
   dir = path.join(process.cwd(), dir);
-  let sourcePath = path.join(dir, 'src');
+  var sourcePath = path.join(dir, 'src');
   if(!think.isDir(sourcePath)) return;
-  let targetPath = path.join(dir, 'lib');
+  var targetPath = path.join(dir, 'lib');
   think.mkdir(targetPath);
   chokidar.watch(sourcePath, {
     persistent: true,
@@ -45,7 +47,7 @@ function compileFile(sourcePath, targetPath, changedPath) {
       sourceMaps: false,
       sourceFileName: changedPath
     });
-    let file = changedPath.substr(sourcePath.length + 1);
+    var file = changedPath.substr(sourcePath.length + 1);
     var saveFile = path.join(targetPath, file);
     think.mkdir(path.dirname(saveFile));
     fs.writeFileSync(saveFile, data.code);
