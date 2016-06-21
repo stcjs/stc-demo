@@ -19,32 +19,55 @@ const fs = require("fs"),
 		"stc-log"
 	],
 	STR_DASH = "========================================",
-	REG_LOCAL = /^stc[\w-]*$/;
+	REG_LOCAL = /^stc[\w-]*$/,
+	REG_DEMO_DIR = /stc-demo$/;
 
 var currentJob = "",
 	totalPassed = 0;
 
 Promise.resolve()
-	.then(curryTask("Making stcjs dir", function() {
-		// todo using `fs.mkdir`
-		return execPromise("mkdir stcjs");
+	.then(curryTask("Making stcjs dir", function () {
+		if (isInStcDemo()) {
+			console.log("In dir stc-demo, doesn't require so.");
+			return;
+		}
+		return folderExistsPromise('stcjs')
+			.catch(function () {
+				return execPromise("mkdir stcjs");
+			});
 	}))
-	.then(curryTask("Switching folder", function () {
-		process.chdir('stcjs');
+	.then(curryTask("Switching folder to stcjs", function () {
+		if (isInStcDemo()) {
+			process.chdir('../');
+		} else {
+			process.chdir('stcjs');
+		}
 		console.log('Current directory: ' + process.cwd());
 	}))
 	.then(curryTask("Git Cloning", function () {
-		return execAll("git clone https://github.com/stcjs/:name/")
+		return folderExistsPromise('stc')
+			.then(function() {
+				console.log("You can manually run `git pull origin master` to update codes.");
+			})
+			.catch(function () {
+				return execAll("git clone https://github.com/stcjs/:name/");
+			});
 	}))
 	.then(curryTask("Making folder node_modules", function () {
-		// todo using `fs.mkdir`
-		return execPromise("mkdir node_modules");
+		return folderExistsPromise('node_modules')
+			.catch(function () {
+				// todo using `fs.mkdir`
+				return execPromise("mkdir node_modules");
+			});
 	}))
 	.then(curryTask("Making soft links for each project", function () {
-		// todo using `fs.symlink`
-		return execAll(`ln -s ../:name :name`, {
-			cwd: `node_modules`
-		});
+		return folderExistsPromise('node_modules/stc')
+			.catch(function () {
+				// todo using `fs.symlink`
+				return execAll(`ln -s ../:name :name`, {
+					cwd: `node_modules`
+				});
+			});
 	}))
 	.then(curryTask("Resolving all `package.json` & generating one", function () {
 		return resolvePackageJSON();
@@ -61,6 +84,10 @@ Promise.resolve()
 		console.error(`${STR_DASH}\nError during task: ${currentJob}`);
 		console.error(err);
 	});
+
+function isInStcDemo() {
+	return REG_DEMO_DIR.test(process.cwd());
+}
 
 function curryTask(taskName, fn) {
 	return function () {
@@ -124,9 +151,23 @@ function execAll(str, options) {
 	);
 }
 
+function folderExistsPromise(folder) {
+	return new Promise((resolve, reject) => {
+		fs.access(folder, fs.R_OK, (err) => {
+			if (err) {
+				reject(err);
+				return;
+			}
+			resolve();
+		});
+	}).then(function () {
+		console.log(`Folder "${folder}" exists.`);
+	});
+}
+
 function execPromise(cmd, options) {
 	console.log(`${cmd}`);
-	var promise = new Promise(function (resolve, reject) {
+	var promise = new Promise((resolve, reject) => {
 		var event = exec(cmd, options, function (err, stdout, stderr) {
 			if (err) {
 				reject(err);
@@ -144,7 +185,7 @@ function execPromise(cmd, options) {
 }
 
 function readJSONPromise(file) {
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		fs.readFile(file, "utf-8", function (err, data) {
 			if (err) {
 				reject(err);
@@ -158,7 +199,7 @@ function readJSONPromise(file) {
 }
 
 function writeJSONPromise(file, json) {
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		fs.writeFile(
 			file,
 			JSON.stringify(json, null, '\t'),
