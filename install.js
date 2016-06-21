@@ -15,8 +15,7 @@ const fs = require("fs"),
 		"stc-plugin-invoke",
 		"stc-helper",
 		"stc-replace",
-		"stc-cli",
-		"stc-demo"
+		"stc-cli"
 	],
 	STR_DASH = "========================================",
 	REG_LOCAL = /^stc[\w-]*$/;

@@ -30,13 +30,13 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/stcjs/stc-file"
+    "url": "https://github.com/stcjs/stc-demo"
   },
   "engines": {
     "node": ">=4.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/stcjs/stc-file/issues"
+    "url": "https://github.com/stcjs/stc-demo/issues"
   }
 }
