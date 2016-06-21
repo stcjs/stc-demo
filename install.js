@@ -101,9 +101,9 @@ function resolvePackageJSON() {
 	});
 
 	function setKey(data, base) {
-		for (key in data[base]) {
+		for (var key in data[base]) {
 			if (REG_LOCAL.test(key)) {
-				return;
+				continue;
 			}
 			if (!package[base][key] || package[base][key] > data[base][key]) {
 				package[base][key] = data[base][key];
