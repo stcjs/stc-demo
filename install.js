@@ -42,12 +42,14 @@ Promise.resolve()
 		}
 		console.log('Current directory: ' + process.cwd());
 	}))
-	.then(curryTask("Git Cloning", () => {
-		return folderExistsPromise('stc')
-			.then(() => {
-				console.log("You can manually run `git pull origin master` to update codes.");
-			})
-			.catch(() => execAll("git clone https://github.com/stcjs/:name/"));
+	.then(curryTask("Git Cloning or pulling", () => {
+		return Promise.all(modules.map((name) => {
+			return folderExistsPromise(name, true)
+				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() =>{
+					console.log(`${name} is not on master branch, ignore.`)
+				}))
+				.catch(() => execPromise(`git clone https://github.com/stcjs/${name}/`));
+		}))
 	}))
 	.then(curryTask("Making folder node_modules", () => {
 		return folderExistsPromise('node_modules')
@@ -126,6 +128,32 @@ function resolvePackageJSON() {
 			}
 		}
 	}
+
+	function readJSONPromise(file) {
+		return new Promise((resolve, reject) => {
+			fs.readFile(file, "utf-8", (err, data) => {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve(
+					JSON.parse(data.toString())
+				);
+			});
+		});
+	}
+
+	function writeJSONPromise(file, json) {
+		return new Promise((resolve, reject) => {
+			fs.writeFile(file, JSON.stringify(json, null, '\t'), "utf-8", (err, data) => {
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve();
+			});
+		});
+	}
 }
 
 function execAll(str, options) {
@@ -137,7 +165,7 @@ function execAll(str, options) {
 	);
 }
 
-function folderExistsPromise(folder) {
+function folderExistsPromise(folder, mute) {
 	return new Promise((resolve, reject) => {
 		fs.access(folder, fs.R_OK, (err) => {
 			if (err) {
@@ -147,12 +175,12 @@ function folderExistsPromise(folder) {
 			resolve();
 		});
 	}).then(() => {
-		console.log(`Folder "${folder}" exists.`);
+		!mute && console.log(`Folder "${folder}" exists.`);
 	});
 }
 
 function execPromise(cmd, options) {
-	console.log(`${cmd}`);
+	console.log(`${cmd}${options && options.cwd && ("\t@" + options.cwd) || ""}`);
 	var promise = new Promise((resolve, reject) => {
 		var event = exec(cmd, options, (err, stdout, stderr) => {
 			if (err) {
@@ -168,30 +196,4 @@ function execPromise(cmd, options) {
 	});
 
 	return promise;
-}
-
-function readJSONPromise(file) {
-	return new Promise((resolve, reject) => {
-		fs.readFile(file, "utf-8", (err, data) => {
-			if (err) {
-				reject(err);
-				return;
-			}
-			resolve(
-				JSON.parse(data.toString())
-			);
-		});
-	});
-}
-
-function writeJSONPromise(file, json) {
-	return new Promise((resolve, reject) => {
-		fs.writeFile(file, JSON.stringify(json, null, '\t'), "utf-8", (err, data) => {
-			if (err) {
-				reject(err);
-				return;
-			}
-			resolve();
-		});
-	});
 }
