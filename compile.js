@@ -11,6 +11,7 @@ var list = [
     'stc-babel',
     'stc-cache',
     'stc-cluster',
+    'stc-css-combine',
     'stc-dep-parser',
     'stc-file',
     'stc-helper',
