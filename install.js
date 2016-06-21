@@ -45,7 +45,7 @@ Promise.resolve()
 	.then(curryTask("Git Cloning or pulling", () => {
 		return Promise.all(modules.map((name) => {
 			return folderExistsPromise(name, true)
-				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() =>{
+				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() => {
 					console.log(`${name} is not on master branch, ignore.`)
 				}))
 				.catch(() => execPromise(`git clone https://github.com/stcjs/${name}/`));
@@ -55,11 +55,13 @@ Promise.resolve()
 		return folderExistsPromise('node_modules')
 			.catch(() => execPromise("mkdir node_modules")); // todo using `fs.mkdir`
 	}))
-	.then(curryTask("Making soft links for each project", () => {
-		return folderExistsPromise('node_modules/stc')
-			.catch(() => execAll(`ln -s ../:name :name`, {
-				cwd: `node_modules`
-			})) // todo using `fs.symlink`
+	.then(curryTask("Making symbol link for stc projects in node_modules", () => {
+		return Promise.all(modules.map((name) => {
+			return folderExistsPromise(`node_modules/${name}`)
+				.catch(() => execPromise(`ln -s ../${name} ${name}`, {
+					cwd: `node_modules`
+				}));
+		}));
 	}))
 	.then(curryTask("Resolving all `package.json` & generating one", () => {
 		return resolvePackageJSON()
@@ -154,15 +156,6 @@ function resolvePackageJSON() {
 			});
 		});
 	}
-}
-
-function execAll(str, options) {
-	return Promise.all(
-		modules.map((name) => execPromise(
-			str.replace(/:name/g, name),
-			options
-		))
-	);
 }
 
 function folderExistsPromise(folder, mute) {
