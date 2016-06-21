@@ -26,17 +26,15 @@ var currentJob = "",
 	totalPassed = 0;
 
 Promise.resolve()
-	.then(curryTask("Making stcjs dir", function () {
+	.then(curryTask("Making stcjs dir", () => {
 		if (isInStcDemo()) {
 			console.log("In dir stc-demo, doesn't require so.");
 			return;
 		}
 		return folderExistsPromise('stcjs')
-			.catch(function () {
-				return execPromise("mkdir stcjs");
-			});
+			.catch(() => execPromise("mkdir stcjs"));
 	}))
-	.then(curryTask("Switching folder to stcjs", function () {
+	.then(curryTask("Switching folder to stcjs", () => {
 		if (isInStcDemo()) {
 			process.chdir('../');
 		} else {
@@ -44,43 +42,35 @@ Promise.resolve()
 		}
 		console.log('Current directory: ' + process.cwd());
 	}))
-	.then(curryTask("Git Cloning", function () {
+	.then(curryTask("Git Cloning", () => {
 		return folderExistsPromise('stc')
-			.then(function() {
+			.then(() => {
 				console.log("You can manually run `git pull origin master` to update codes.");
 			})
-			.catch(function () {
-				return execAll("git clone https://github.com/stcjs/:name/");
-			});
+			.catch(() => execAll("git clone https://github.com/stcjs/:name/"));
 	}))
-	.then(curryTask("Making folder node_modules", function () {
+	.then(curryTask("Making folder node_modules", () => {
 		return folderExistsPromise('node_modules')
-			.catch(function () {
-				// todo using `fs.mkdir`
-				return execPromise("mkdir node_modules");
-			});
+			.catch(() => execPromise("mkdir node_modules")); // todo using `fs.mkdir`
 	}))
-	.then(curryTask("Making soft links for each project", function () {
+	.then(curryTask("Making soft links for each project", () => {
 		return folderExistsPromise('node_modules/stc')
-			.catch(function () {
-				// todo using `fs.symlink`
-				return execAll(`ln -s ../:name :name`, {
-					cwd: `node_modules`
-				});
-			});
+			.catch(() => execAll(`ln -s ../:name :name`, {
+				cwd: `node_modules`
+			})) // todo using `fs.symlink`
 	}))
-	.then(curryTask("Resolving all `package.json` & generating one", function () {
-		return resolvePackageJSON();
+	.then(curryTask("Resolving all `package.json` & generating one", () => {
+		return resolvePackageJSON()
 	}))
-	.then(curryTask("Installing npm package", function () {
+	.then(curryTask("Installing npm package", () => {
 		return execPromise("npm install --registry=https://registry.npm.taobao.org", {
 			pipe: true
-		});
+		})
 	}))
-	.then(function () {
+	.then(() => {
 		console.log(`${STR_DASH}\nAll done.`);
 	})
-	.catch(function (err) {
+	.catch((err) => {
 		console.error(`${STR_DASH}\nError during task: ${currentJob}`);
 		console.error(err);
 	});
@@ -95,7 +85,7 @@ function curryTask(taskName, fn) {
 		currentJob = taskName;
 		console.log(`${STR_DASH}\nTask start: ${currentJob}`);
 		return (fn() || Promise.resolve())
-			.then(function () {
+			.then(() => {
 				var passed = new Date() - startTime;
 				totalPassed += passed;
 				console.log(`Task done after: ${passed}ms, total passed time: ${totalPassed}ms.`)
@@ -109,24 +99,22 @@ function resolvePackageJSON() {
 		devDependencies: {}
 	};
 	return Promise.all(
-		modules.map(function (name) {
+		modules.map((name) => {
 			var dir = `${name}/package.json`;
 			return readJSONPromise(dir)
-				.then(function (data) {
+				.then((data) => {
 					setKey(data, "dependencies");
 					setKey(data, "devDependencies");
 				})
-				.then(function () {
+				.then(() => {
 					console.log(`Parsed\t${dir}`);
 				})
-				.catch(function (err) {
+				.catch((err) => {
 					console.log(`Error\t${dir}`);
 					// console.error(err);
 				});
 		})
-	).then(function () {
-		return writeJSONPromise(`package.json`, package);
-	});
+	).then(() => writeJSONPromise(`package.json`, package));
 
 	function setKey(data, base) {
 		for (var key in data[base]) {
@@ -142,12 +130,10 @@ function resolvePackageJSON() {
 
 function execAll(str, options) {
 	return Promise.all(
-		modules.map(function (name) {
-			return execPromise(
-				str.replace(/:name/g, name),
-				options
-			);
-		})
+		modules.map((name) => execPromise(
+			str.replace(/:name/g, name),
+			options
+		))
 	);
 }
 
@@ -160,7 +146,7 @@ function folderExistsPromise(folder) {
 			}
 			resolve();
 		});
-	}).then(function () {
+	}).then(() => {
 		console.log(`Folder "${folder}" exists.`);
 	});
 }
@@ -168,7 +154,7 @@ function folderExistsPromise(folder) {
 function execPromise(cmd, options) {
 	console.log(`${cmd}`);
 	var promise = new Promise((resolve, reject) => {
-		var event = exec(cmd, options, function (err, stdout, stderr) {
+		var event = exec(cmd, options, (err, stdout, stderr) => {
 			if (err) {
 				reject(err);
 				return;
@@ -186,7 +172,7 @@ function execPromise(cmd, options) {
 
 function readJSONPromise(file) {
 	return new Promise((resolve, reject) => {
-		fs.readFile(file, "utf-8", function (err, data) {
+		fs.readFile(file, "utf-8", (err, data) => {
 			if (err) {
 				reject(err);
 				return;
@@ -200,16 +186,12 @@ function readJSONPromise(file) {
 
 function writeJSONPromise(file, json) {
 	return new Promise((resolve, reject) => {
-		fs.writeFile(
-			file,
-			JSON.stringify(json, null, '\t'),
-			"utf-8",
-			function (err, data) {
-				if (err) {
-					reject(err);
-					return;
-				}
-				resolve();
-			});
+		fs.writeFile(file, JSON.stringify(json, null, '\t'), "utf-8", (err, data) => {
+			if (err) {
+				reject(err);
+				return;
+			}
+			resolve();
+		});
 	});
 }
