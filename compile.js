@@ -5,23 +5,7 @@ var babel = require('babel-core')
 var think = require('thinkit');
 think = think.default || think;
 
-var list = [
-    'flkit',
-    'stc',
-    'stc-babel',
-    'stc-cache',
-    'stc-cluster',
-    'stc-css-combine',
-    'stc-dep-parser',
-    'stc-file',
-    'stc-helper',
-    'stc-plugin',
-    'stc-typescript',
-    'stc-plugin-invoke',
-    'stc-uglify',
-    'stc-eslint',
-    'stc-log'
-];
+var list = require('./package.js');
 
 list.forEach(function(dir) {
   dir = '../' + dir;
