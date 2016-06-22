@@ -1,19 +1,16 @@
-var fs = require("fs"),
+const fs = require("fs"),
 	https = require('https'),
 	exec = require('child_process').exec,
-	modules = [],
 	STR_DASH = "========================================",
 	REG_LOCAL = /^stc[\w-]*$/,
 	REG_DEMO_DIR = /stc-demo$/;
 
-try{
-	modules = require('./package.js');
-}catch(e){}
-
 var currentJob = "",
+	modules = [],
 	totalPassed = 0;
 
-Promise.resolve(getPackages())
+Promise.resolve()
+	.then(curryTask("Getting packages", getPackages))
 	.then(curryTask("Making stcjs dir", () => {
 		if (isInStcDemo()) {
 			console.log("In dir stc-demo, doesn't require so.");
@@ -36,7 +33,7 @@ Promise.resolve(getPackages())
 				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() => {
 					console.log(`${name} is not on master branch, ignore.`)
 				}))
-				.catch(() => execPromise(`git clone git@github.com:stcjs/${name}`));
+				.catch(() => execPromise(`git clone https://github.com/stcjs/${name}/`));
 		}))
 	}))
 	.then(curryTask("Making folder node_modules", () => {
@@ -51,9 +48,7 @@ Promise.resolve(getPackages())
 				}));
 		}));
 	}))
-	.then(curryTask("Resolving all `package.json` & generating one", () => {
-		return resolvePackageJSON()
-	}))
+	.then(curryTask("Resolving all `package.json` & generating one", resolvePackageJSON))
 	.then(curryTask("Installing npm package", () => {
 		return execPromise("npm install --registry=https://registry.npm.taobao.org", {
 			pipe: true
@@ -179,22 +174,28 @@ function execPromise(cmd, options) {
 	return promise;
 }
 
-function getPackages(){
-	return new Promise(function(resolve, reject) {
-		if(modules.length){
+function getPackages() {
+	const packageUrl = 'https://raw.githubusercontent.com/stcjs/stc-demo/master/package.js';
+
+	return new Promise(function (resolve, reject) {
+		try {
+			modules = require('./package.js');
+		} catch (e) { }
+
+		if (modules.length) {
 			return resolve();
 		}
-		var packageUrl = 'https://raw.githubusercontent.com/stcjs/stc-demo/master/package.js';
+
 		console.log('get packages from ' + packageUrl);
-		https.get(packageUrl, function(res) {
-			if(res.statusCode !== 200){
+		https.get(packageUrl, function (res) {
+			if (res.statusCode !== 200) {
 				return reject(new Error('get packages error'));
 			}
 			var buffers = [];
-			res.on('data', function(buf) {
+			res.on('data', function (buf) {
 				buffers.push(buf);
 			})
-			res.on('end', function(params) {
+			res.on('end', function (params) {
 				var data = Buffer.concat(buffers);
 				fs.writeFileSync('./package.js', data);
 				modules = require('./package.js');
