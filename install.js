@@ -33,7 +33,7 @@ Promise.resolve()
 				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() => {
 					console.log(`${name} is not on master branch, ignore.`)
 				}))
-				.catch(() => execPromise(`git clone https://github.com/stcjs/${name}/`));
+				.catch(() => execPromise(`git clone git@github.com:stcjs/${name}.git`));
 		}))
 	}))
 	.then(curryTask("Making folder node_modules", () => {
