@@ -184,7 +184,9 @@ function getPackages(){
 		if(modules.length){
 			return resolve();
 		}
-		https.get('https://raw.githubusercontent.com/stcjs/stc-demo/master/package.js', function(res) {
+		var packageUrl = 'https://raw.githubusercontent.com/stcjs/stc-demo/master/package.js';
+		console.log('get packages from ' + packageUrl);
+		https.get(packageUrl, function(res) {
 			if(res.statusCode !== 200){
 				return reject(new Error('get packages error'));
 			}
