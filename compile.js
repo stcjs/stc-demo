@@ -41,7 +41,7 @@ function compileFile(sourcePath, targetPath, changedPath) {
       data.code = data.code + '\n' + prefix + saveFile + '.map';
     }
     fs.writeFileSync(saveFile, data.code);
-    let sourceMap = data.map;
+    var sourceMap = data.map;
     //file value must be equal sources values
     sourceMap.file = sourceMap.sources[0];
     fs.writeFileSync(saveFile + '.map', JSON.stringify(sourceMap, undefined, 4));
