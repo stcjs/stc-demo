@@ -1,14 +1,19 @@
-const fs = require("fs"),
+var fs = require("fs"),
+	https = require('https'),
 	exec = require('child_process').exec,
-	modules = require('./package.js'),
+	modules = [],
 	STR_DASH = "========================================",
 	REG_LOCAL = /^stc[\w-]*$/,
 	REG_DEMO_DIR = /stc-demo$/;
 
+try{
+	modules = require('./package.js');
+}catch(e){}
+
 var currentJob = "",
 	totalPassed = 0;
 
-Promise.resolve()
+Promise.resolve(getPackages())
 	.then(curryTask("Making stcjs dir", () => {
 		if (isInStcDemo()) {
 			console.log("In dir stc-demo, doesn't require so.");
@@ -172,4 +177,28 @@ function execPromise(cmd, options) {
 	});
 
 	return promise;
+}
+
+function getPackages(){
+	return new Promise(function(resolve, reject) {
+		if(modules.length){
+			return resolve();
+		}
+		https.get('https://raw.githubusercontent.com/stcjs/stc-demo/master/package.js', function(res) {
+			if(res.statusCode !== 200){
+				return reject(new Error('get packages error'));
+			}
+			var buffers = [];
+			res.on('data', function(buf) {
+				buffers.push(buf);
+			})
+			res.on('end', function(params) {
+				var data = Buffer.concat(buffers);
+				fs.writeFileSync('./package.js', data);
+				modules = require('./package.js');
+				fs.unlinkSync('./package.js');
+				resolve();
+			})
+		})
+	})
 }
