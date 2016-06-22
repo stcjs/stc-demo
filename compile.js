@@ -30,13 +30,21 @@ function compileFile(sourcePath, targetPath, changedPath) {
       filename: changedPath,
       presets: ['es2015-loose', 'stage-1'],
       plugins: ['transform-runtime'],
-      sourceMaps: false,
+      sourceMaps: true,
       sourceFileName: changedPath
     });
     var file = changedPath.substr(sourcePath.length + 1);
     var saveFile = path.join(targetPath, file);
     think.mkdir(path.dirname(saveFile));
+    var prefix = '//# sourceMappingURL=';
+    if(data.code.indexOf(prefix) === -1){
+      data.code = data.code + '\n' + prefix + saveFile + '.map';
+    }
     fs.writeFileSync(saveFile, data.code);
+    let sourceMap = data.map;
+    //file value must be equal sources values
+    sourceMap.file = sourceMap.sources[0];
+    fs.writeFileSync(saveFile + '.map', JSON.stringify(sourceMap, undefined, 4));
   }catch(e){
     console.error(e.stack); 
   }

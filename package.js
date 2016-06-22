@@ -13,7 +13,6 @@ module.exports = [
     "stc-plugin-invoke",
     "stc-helper",
     "stc-replace",
-    "stc-cli",
     "stc-log",
     "stc-css-combine"
 ]
