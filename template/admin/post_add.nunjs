@@ -1,0 +1,209 @@
+{% extends 'admin/inc/base.nunjs' %}
+
+{% block content %}
+<div class="main">
+	<div class="body container">
+		<div class="typecho-page-title">
+			{% if post.id %}
+			<h2>编辑「{{ post.title }}」</h2>
+			{% else %}
+			<h2>撰写「新内容」</h2>
+			{% endif %}
+		</div>
+
+		<form id="main" action="/admin/post/save/" method="post">
+			<div class="row typecho-page-main typecho-post-area" role="form">
+				<div class="col-mb-12 col-tb-9" role="main">
+					<p class="title">
+						<input reqmsg="标题" maxlength="100" type="text" id="title" name="title" autocomplete="off" value="{{ post.title }}" placeholder="标题" class="w-100 text title" />
+					</p>
+					<p class="mono url-slug">
+						<label for="slug" class="sr-only">缩略名</label>
+						{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/<input reqmsg="缩略名" max-length="50" datatype="reg-/^[a-z][\w\-%]+$/i" type="text" id="slug" name="slug" autocomplete="off" value="{{ post.slug }}" class="mono" />.html&nbsp;&nbsp;（用 - 分隔单词）
+					</p>
+					<p>
+						<label for="content" class="sr-only">内容</label>
+						<textarea reqmsg="内容" style="height: 530px" autocomplete="off" id="content" name="content" class="w-100 mono">{{ post.content_markdown }}</textarea>
+					</p>
+					<p>
+						<label for="content_summary" class="sr-only">摘要</label>
+						<textarea reqmsg="摘要" style="height: 120px" autocomplete="off" id="content_summary" name="content_summary" placeholder="摘要" class="w-100 mono">{{ post.content_summary }}</textarea>
+					</p>
+				</div>
+				<div id="edit-secondary" class="col-mb-12 col-tb-3" role="complementary">
+					<div class="tab-content">
+						<section class="typecho-post-option">
+							<p>
+								<button type="submit" class="btn" id="btn-preview">预览</button>
+								<input type="hidden" name="post_id" value="{{ post.id }}" />
+								{% if post.id %}
+								<button type="submit" class="btn primary" id="btn-submit">更新</button>
+								{% else %}
+								<button type="submit" class="btn primary" id="btn-submit">发布</button>
+								{% endif %}
+							</p>
+						</section>
+
+						<section class="typecho-post-option">
+							<label for="pub_date" class="typecho-label">发布日期</label>
+							<p>
+								<input reqmsg="发布日期" datatype="reg-/^\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/" class="typecho-date w-100" type="text" name="pub_date" id="pub_date" value="{{ post.pub_date|date('YYYY-MM-DD HH:mm:ss') }}" />
+							</p>
+						</section>
+
+						<section class="typecho-post-option">
+							<label for="tag" class="typecho-label">标签</label>
+							<p>
+								<input value="{{ post.tags.join(', ') }}" id="tag" name="tag" type="text" placeholder="英文逗号分隔" class="w-100 text" />
+							</p>
+						</section>
+
+						<section class="typecho-post-option serie-option">
+							<label for="series_id" class="typecho-label">专题</label>
+							<p>
+								<select name="series_id" id="series_id">
+									<option value="">---------</option>
+									{% for id in blogConf.serie_list_order %}
+									<option value="{{ id }}"{% if id == post.series_id %} selected{% endif %}>{{ blogConf.serie_list[id][0] }}</option>
+									{% endfor %}
+								</select>
+							</p>
+						</section>
+
+						<div id="advance-panel">
+							<section class="typecho-post-option allow-option">
+								<label class="typecho-label">内容类型？</label>
+								<ul>
+									<li>
+										<input type="radio" id="type-post" value="post" name="post_type"{% if post.type == 'post' %} checked="true"{% endif %} />&nbsp;
+										<label for="type-post">文章</label>
+									</li>
+									<li>
+										<input type="radio" id="type-page" value="page" name="post_type"{% if post.type == 'page' %} checked="true"{% endif %} />&nbsp;
+										<label for="type-page">页面</label>
+									</li>
+								</ul>
+							</section>
+
+							<section class="typecho-post-option allow-option">
+								<label class="typecho-label">是否公开？</label>
+								<ul>
+									<li>
+										<input type="radio" id="status-publish" value="publish" name="status"{% if post.status == 'publish' %} checked="true"{% endif %} />&nbsp;
+										<label for="status-publish">公开</label>
+									</li>
+									<li>
+										<input type="radio" id="status-draft" value="draft" name="status"{% if post.status == 'draft' %} checked="true"{% endif %} />&nbsp;
+										<label for="status-draft">不公开</label>
+									</li>
+								</ul>
+							</section>
+
+							<section class="typecho-post-option allow-option">
+								<label class="typecho-label">允许评论？</label>
+								<ul>
+									<li>
+										<input type="radio" id="comment-open" value="open" name="allow_comment"{% if post.allow_comment == 'open' %} checked="true"{% endif %} />&nbsp;
+										<label for="comment-open">允许</label>
+									</li>
+									<li>
+										<input type="radio" id="comment-closed" value="closed" name="allow_comment"{% if post.allow_comment == 'closed' %} checked="true"{% endif %} />&nbsp;
+										<label for="comment-closed">不允许</label>
+									</li>
+								</ul>
+							</section>
+							{% if post.id %}
+							<section class="typecho-post-option allow-option">
+								<label class="typecho-label">变化很大？</label>
+								<ul>
+									<li>
+										<input type="checkbox" id="update-date" value="open" name="update_date" />&nbsp;
+										<label for="update-date">是（更新修改日期）</label>
+									</li>
+								</ul>
+							</section>
+
+							<section class="typecho-post-option allow-option">
+								<p>
+									<a href="#" data-id="{{ post.id }}" id="link-delelte">删除本文</a>
+								</p>
+							</section>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="/static/js/admin/add_post.js"></script>
+
+<script>
+Dom.ready(function() {
+	window.onbeforeunload = function() {
+		if(W('#main').isFormChanged()) {
+			return '部分内容已经发生了变化，是否继续？';
+		}
+	};
+
+	var mode = 'submit';
+
+	W('#btn-preview').click(function() {
+		mode = 'preview';
+	});
+
+	W('#btn-submit').click(function() {
+		mode = 'submit';
+	});
+
+	W('#main').on('submit', function(e) {
+		if(!Valid.checkAll(this)) {
+			e.preventDefault();
+			return;
+		}
+
+		if(mode == 'preview') {
+			this.action = '/preview/';
+			this.target = '_preview';
+		} else {
+			e.preventDefault();
+
+			this.action = '/admin/post/save/';
+			this.target = '_self';
+
+			Ajax.post(this, function(d) {
+				d = JSON.parse(d);
+
+				if(d.errno !== 0) {
+					alert('提交失败：' + d.errmsg);
+				} else {
+					window.onbeforeunload = null;
+					location.href = '/admin/post/list/?post_type=' + d.data.type;
+				}
+			});
+		}
+	});
+
+	W('#link-delelte').click(function(e) {
+		e.preventDefault();
+
+		if(!confirm('真的要删除吗？')) {
+			return;
+		}
+
+		var id = W(this).attr('data-id');
+
+		Ajax.post('/admin/post/delete/', {id : id}, function(d) {
+			d = JSON.parse(d);
+			if(d.errno !== 0) {
+				alert('删除失败：' + d.errmsg);
+			} else {
+				W(window).un('beforeunload');
+				location.href = '/admin/post/list/';
+			}
+		});
+	});
+});
+</script>
+{% endblock %}

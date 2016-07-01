@@ -1,0 +1,12 @@
+{% if post.series_id %}
+	<div class="entry-series">
+		<h3>专题「{{ blogConf.serie_list[post.series_id][0] }}」的其他文章&nbsp;<a href="/series.html#toc-{{ post.series_id }}" title="更多">»</a></h3>
+		<ul>
+			{% for post in post.serieList %}
+				{% if loop.index <= 10 %}
+					<li><a href="/post/{{ post.slug }}.html">{{ post.title }}</a>&nbsp;<span class="date">({{ post.pub_date|date('MMM DD, YYYY') }})</span></li>
+				{% endif %}
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}

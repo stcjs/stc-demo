@@ -1,0 +1,31 @@
+{% include 'home/inc/header.nunjs' %}	
+
+{% for post in data %}
+<article class="post post-list">
+	<div class="meta">
+		<div class="date">
+			<time>{{ post.pub_date|date("MMM DD, YYYY") }}</time>
+		</div>
+		<div class="comment">
+			<a href="/post/{{ post.slug }}.html#comments">{{ post.comment_num }} Comments</a>
+		</div>
+	</div>
+
+	<h1 class="title">
+		<a href="/post/{{ post.slug }}.html">{{ post.title|safe }}</a>
+	</h1>
+	
+	<div class="entry-content">
+		<p>
+			{{ post.summary|safe }}[...]
+		</p>
+		<p>
+			<a href="/post/{{ post.slug }}.html" class="more-link">继续阅读 &raquo;</a>
+		</p>
+	</div>
+</article>
+{% endfor %}
+
+{% include 'home/inc/pager.nunjs' %}
+
+{% include 'home/inc/footer.nunjs' %}	

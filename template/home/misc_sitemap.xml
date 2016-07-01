@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for post in list %}
+    <url>
+        <loc>{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/{{ post.slug }}.html</loc>
+        <lastmod>{{ post.pub_date|date }}</lastmod>
+        <priority>0.6</priority>
+    </url>
+{% endfor %}
+</urlset>

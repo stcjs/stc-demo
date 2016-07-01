@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8" />
+	<meta content="width=device-width,minimum-scale=1.0" name="viewport" />
+	<meta name="format-detection" content="telephone=no">
+	<meta name="robots" content="noindex, nofollow" />
+	<title>管理后台 | {{ blogConf.blog_name }}</title>
+	<link rel="stylesheet" href="/static/css/admin/all.css" /> 
+</head>
+<body>
+<div class="typecho-head-nav clearfix" role="navigation">
+	<nav id="typecho-nav-list">
+		<ul class="root{% if nav|indexOf('index') == 0 %} focus{% endif %}">
+			<li class="parent">
+				<a href="/admin/">控制台</a>
+			</li>
+			<li>
+				<ul class="child">
+					<li class="{% if nav == 'index' %}focus{% endif %} last">
+						<a href="/admin/">概要</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<ul class="root {% if nav|indexOf('add') == 0 %}focus{% endif %}">
+			<li class="parent">
+				<a href="/admin/post/add?post_type=post">撰写</a>
+			</li>
+			<li>
+				<ul class="child">
+					<li class="{% if nav == 'addpost' %}focus{% endif %}">
+						<a href="/admin/post/add?post_type=post">撰写文章</a>
+					</li>
+					<li class="{% if nav == 'addpage' %}focus{% endif %} last">
+						<a href="/admin/post/add?post_type=page">创建页面</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<ul class="root {% if nav|indexOf('list') == 0 %}focus{% endif %}">
+			<li class="parent">
+				<a href="/admin/post/list?post_type=post">管理</a>
+			</li>
+			<li>
+				<ul class="child">
+					<li class="{% if nav == 'listpost' %}focus{% endif %}">
+						<a href="/admin/post/list?post_type=post">文章</a>
+					</li>
+					<li class="{% if nav == 'listpage' %}focus{% endif %}">
+						<a href="/admin/post/list?post_type=page">页面</a>
+					</li>
+					<li class="last">
+						<a href="{{ blogConf.comment_admin_url }}" target="_blank">评论</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</nav>
+	<div class="operate">
+		<span class="author">{{ user }} @ {{ xVia }}</span><a class="exit" href="/admin/index/logout/">登出</a><a target="_blank" href="/">首页</a>
+	</div>
+</div>
+
+{% block content %}{% endblock %}
+
+<div class="typecho-foot" role="contentinfo">
+    <div class="copyright">
+        {{ blogConf.blog_name }} - 管理后台
+    </div>
+</div>
+</body>
+</html>

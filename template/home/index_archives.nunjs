@@ -1,0 +1,25 @@
+{% include 'home/inc/header.nunjs' %}	
+
+<article class="post post-archives">
+	<h1 class="title">归档</h1>
+	
+	<div class="entry-content">
+		{% include 'home/inc/toc.nunjs' %}
+		<p>
+			本博客最早一篇文章创建于 2008 年 7 月，当时我从自己开发的 ASP 博客系统迁到 WordPress，之前的文章未迁移。2013 年 3 月，又从 WordPress 迁到自己开发的 Python 博客系统（<a href="/post/new-blog.html">详情</a>），文章迁移了一部分。2014 年初再次改用 NodeJS 重新开发了博客系统（<a href="/post/ququblog.html">详情</a>），数据完全保留，使用至今。
+		</p>
+		<p>
+			我有使用 Kindle 阅读的习惯，从 Paperwhite 到 Voyage 到 Oasis，我都第一时间入手。几年下来，我在亚马逊和图灵社区购买并读过的 Kindle 版书籍加起来也有几十本了。如果你也喜欢用 Kindle 阅读，<a href="/post/for-kindle.html">请下载本站合辑 Kindle 版</a>。
+		</p>
+		{% for item in list %}
+			<h3>{{ item[0] }}&nbsp;<a {% if item[3] %}name="toc-{{ item[3] }}" {% endif %}title="查看「{{ item[0] }}」的全部文章" href="/search.html?s={{ ('type:post date:'+item[1])|urlencode }}">»</a></h3>
+			<ul>
+				{% for post in item[2] %}
+				<li><a href="/post/{{ post.slug }}.html">{{ post.title }}</a>&nbsp;<span class="date">({{ post.pub_date|date('MMM DD, YYYY') }})</span></li>
+				{% endfor %}
+			</ul>
+		{% endfor %}
+	</div>
+</article>
+
+{% include 'home/inc/footer.nunjs' %}		

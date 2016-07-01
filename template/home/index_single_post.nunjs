@@ -1,0 +1,76 @@
+{% include 'home/inc/header.nunjs' %}	
+
+<article class="post post-{{ post.id }}" itemscope itemtype="http://schema.org/Article">
+    {% if post.type != 'page' %}
+		<div class="meta">			
+			<div class="date">
+				<time itemprop="datePublished" content="{{ post.pub_date|date }}">{{ post.pub_date|date('MMM DD, YYYY') }}</time>
+			</div>
+			<div class="comment">
+				<a href="#comments">{{ post.comment_num }} Comments</a>
+			</div>
+		</div>
+    {% endif %}
+
+	<h1 class="title" itemprop="headline">{{ post.title|safe }}</h1>
+	
+	<div class="entry-content" itemprop="articleBody">
+		{% include 'home/inc/toc.nunjs' %}
+		{{ post.content|safe }}
+
+		{%if post.type != 'page' %}
+			<p>
+				本文链接：<a rel="bookmark" title="Permalink to {{ post.title }}" href="{{ blogConf.site_url }}/post/{{ post.slug }}.html" itemprop="url">{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/{{ post.slug }}.html</a>，<a href="{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/{{ post.slug }}.html#comments">参与评论 »</a>
+			</p>
+			
+			<p>--<acronym title="End of File">EOF</acronym>--</p>
+			
+			<p class="post-info">
+				发表于&nbsp;<span class="date">{{ post.pub_date|date("YYYY-MM-DD HH:mm:ss") }}</span>
+				{% if post.tags.length %}
+					，并被添加「
+					{% for item in post.tags %}
+						{% if not loop.first %}、{% endif %}
+						<a href="/search.html?s={{ ('tag:' + item)|urlencode }}">{{ item }}</a>
+					{% endfor %}
+					」标签
+				{% endif %}
+				{% if post.update_date.toString() != post.pub_date.toString() %}
+					，最后修改于&nbsp;<span class="date">{{ post.update_date|date('YYYY-MM-DD HH:mm:ss') }}</span>
+				{% endif %}
+				。
+			</p>
+
+			<p class="copyright-info">本站使用「<a href="http://creativecommons.org/licenses/by/4.0/deed.zh">署名 4.0 国际</a>」创作共享协议，同时授权「奇舞周刊」微信公众号在使用本站文章时标注「原创」。<a href="https://imququ.com/post/about.html#toc-1">更多说明 »</a></p>
+
+			{% if pubDays >= 180 %}
+				<p class="expire-tips">
+					提醒：本文最后更新于&nbsp;{{ pubDays }}&nbsp;天前，文中所描述的信息可能已发生改变，请谨慎使用。
+				</p>
+			{% endif %}
+
+			{% include 'home/inc/post_serie.nunjs' %}
+		{% endif %}
+	</div>
+</article>
+
+{%if post.type != 'page' and (prevPost or nextPost) %}
+	<nav class="page-navi">
+		{% if prevPost %}
+			<a href="/post/{{ prevPost.slug }}.html" class="prev">&laquo; {{ prevPost.title }}</a>
+		{% endif %}
+
+		{% if nextPost %}
+			<a href="/post/{{ nextPost.slug }}.html" class="next">{{ nextPost.title }} &raquo;</a>
+		{% endif %}
+	</nav>
+{% endif %}
+
+{%if env == 'production' and post.allow_comment == 'open' and post.status == 'publish' %}
+	<section id="comments">
+		<h1 class="title">Comments</h1>
+		<div id="disqus_thread" class="ds-thread" data-identifier="{{ pageName }}" data-url="https://imququ.com/post/{{ post.slug }}.html"></div>
+	</section>
+{% endif %}
+
+{% include 'home/inc/footer.nunjs' %}	

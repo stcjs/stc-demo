@@ -1,0 +1,30 @@
+					</div>
+			</div>
+			
+			<footer id="footer" class="inner">
+				&copy; {{ year }}&nbsp;-&nbsp;{{ blogConf.blog_name}}
+				{% if xVia|indexOf('Aliyun') == -1 and xVia != 'Local' %}
+					&nbsp;-&nbsp;<a href="{{ blogConf.site_url }}">ImQuQu.com</a>
+				{%else%}
+					&nbsp;-&nbsp;<a target="_blank" rel="nofollow designer" class="external beian" href="http://www.miitbeian.gov.cn/">京 ICP 备 15046275 号</a>
+				{% endif %}
+				<br />
+				Powered by&nbsp;<a target="_blank" href="https://thinkjs.org">ThinkJS</a>
+				&nbsp;&amp;&nbsp;<a target="_blank" rel="nofollow designer" class="external" href="https://github.com/shashankmehta/greyshade">GreyShade</a>
+			</footer>
+		</div>
+	</div>
+	
+	<input type="hidden" id="CURRENT_PAGE" value="{{ pageName }}" />
+	<input type="hidden" id="CDN_DOMAIN" value="{{ blogConf.static_url }}" />
+	<input type="hidden" id="VIA_SERVER" value="{{ xVia }}" />
+
+	{% if xVia|indexOf('Aliyun') == -1 and xVia != 'Local' %}
+		<div id="google_translate_element"></div>
+	{% endif %}
+
+	<script src="/static/js/common/analytics_simple.js" async_STC_REPLACE_TO_EMPTY lsname="ana_js"></script>
+
+	<script src="/static/js/home/blog.js" async_STC_REPLACE_TO_EMPTY lsname="blog_js"></script>
+</body>
+</html>

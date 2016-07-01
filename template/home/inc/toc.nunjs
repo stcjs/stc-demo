@@ -1,0 +1,21 @@
+{% if toc|is_defined and toc.length %}
+<div id="toc-container">
+	<div id="toc">
+		<p>
+			<strong>{{ tocName }}</strong>
+		</p>
+		<ul>
+			{% for item in toc %}
+				<li><a href="#toc-{{ item[1] }}">{{ item[0]|safe }}</a></li>
+				{% if item[2] %}
+					<ul>
+						{% for item2 in item[2] %}
+							<li><a href="#toc-{{ item2[1] }}">{{ item2[0]|safe }}</a></li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endif %}

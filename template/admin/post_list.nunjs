@@ -1,0 +1,91 @@
+{% extends 'admin/inc/base.nunjs' %}
+
+{% block content %}
+<div class="main">
+	<div class="body container">
+		<div class="typecho-page-title">
+			<h2>管理「{% if type == 'post' %}文章{% else %}页面{% endif %}」<a href="/admin/post/add/?post_type={{ type }}">新增一篇</a></h2>
+		</div>
+
+		<div class="row typecho-page-main" role="main">
+			<div class="col-mb-12 typecho-list">
+				<div class="typecho-list-operate clearfix">
+					<div class="search" role="search">
+						<form action="?">
+							{% if keyword %}
+								<a href="?post_type={{ type }}">&laquo;&nbsp;取消筛选</a>&nbsp;&nbsp;
+							{% endif %}
+							<input type="hidden" name="post_type" value="{{ type }}" />
+							<input class="text-s" placeholder="请输入关键字" value="{{ keyword }}" name="keyword" type="text" />
+							<button type="submit" class="btn btn-s">筛选</button>
+						</form>
+					</div>
+				</div>
+
+				<div class="typecho-table-wrap">
+					<table class="typecho-list-table">
+						<colgroup>
+							<col width="9%" />
+							<col width="32%" />
+							<col class="kit-hidden-mb" width="8%" />
+							<col class="kit-hidden-tb" />
+							<col class="kit-hidden-mb" width="18%" />
+							<col width="6%" />
+						</colgroup>
+						<thead>
+							<tr>
+								<th><span class="kit-hidden">评论<span class="sep"></span>浏览</span></th>
+								<th>标题</th>
+								<th class="kit-hidden-mb">状态</th>
+								<th class="kit-hidden-tb">标签</th>
+								<th class="kit-hidden-mb">日期</th>
+								<th class="center">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% if count %}
+							{% for post in data %}
+							<tr>
+								<td>
+									<a target="_blank" href="/post/{{ post.slug }}.html#comments" class="balloon-button size-10">{{ post.comment_num }}<span class="sep"></span>{{ post.view_num }}</a>
+								</td>
+								<td>
+									<a target="_blank" href="/post/{{ post.slug }}.html">{{ post.title|safe }}</a>
+								</td>
+								<td class="kit-hidden-mb">
+									{{ '已发表' if post.status == 'publish' else '草稿' }}
+								</td>
+								<td class="kit-hidden-tb">
+									{{ post.tags|join('、') }}
+								</td>
+								<td class="kit-hidden-mb">
+									{{ post.pub_date|date('YYYY-MM-DD HH:mm:ss') }}
+								</td>
+								<td class="center">
+									<a href="/admin/post/edit?id={{ post.id }}">编辑</a>         
+								</td>
+							</tr>
+							{% endfor %}
+						{% else %}
+							<tr>
+								<td colspan="6"><h4 class="typecho-list-table-title">没有任何文章</h4></td>
+							</tr>
+						{% endif %}
+						</tbody>
+					</table>
+				</div>
+					
+				<div class="typecho-list-operate clearfix">
+					<div class="operate">
+						<div class="btn-group btn-drop">
+							每页显示 {{ numsPerPage }} 条，共 {{ count }} 条
+						</div>
+					</div>
+
+					{% include 'admin/inc/pager.nunjs' %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

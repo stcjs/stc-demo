@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8" />
+	<meta content="width=device-width,minimum-scale=1.0" name="viewport" />
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="referrer" content="always">
+
+	{% if pageName == 'error-404' %}
+		<meta name="robots" content="noindex, nofollow, noarchive">
+	{% endif %}
+
+	<title>{% if title %}{{ title }}{% endif %}{{ blogConf.blog_name }}</title>
+
+	[lscookie]
+
+	<link rel="apple-touch-icon" href="https://imququ.com/static/img/blog/favicon.png" />
+	<link rel="search" type="application/opensearchdescription+xml" href="{{ blogConf.site_url }}/opensearch.xml" title="{{ blogConf.blog_name }}" />
+	<link rel="stylesheet" href="/static/css/home/blog.css" lsname="blog_css" />
+	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{{ blogConf.site_url }}/rss.html" />
+	
+	{% if pageName == 'blog-home' and currentPage == 1 %}
+		<meta name="description" content="屈屈，专职前端开发，目前在中国北京。这个博客是我随便记录东西的地方。最新文章：{{ data[0].title }}" />
+	{% elif post|is_defined %}
+		<link rel="canonical" href="{{ blogConf.site_url }}/post/{{ post.slug }}.html" />
+		{% if post.content_summary %}
+			<meta name="description" content="{{ post.content_summary }}" />
+		{% endif %}
+	{% endif %}
+</head>
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+				<header id="header" class="inner">
+					<div class="profilepic">
+						<a href="/"></a>
+					</div>
+					<h1><a href="/">Jerry Qu</a></h1>
+					<p class="subtitle">
+						专注 WEB 端开发
+					</p>
+					<nav id="main-nav">
+						<ul>
+							{% for item in blogConf.nav_list %}
+								<li {% if pageName == item[0] %}class="on"{% endif %}><a href="{{ item[1] }}"><span>{{ item[2] }}</span></a></li>
+							{% endfor %}
+						</ul>
+					</nav>
+					<nav id="sub-nav">
+						<div class="social">
+							<a target="_blank" class="twitter external" rel="nofollow" href="https://twitter.com/qgy18" title="Twitter">Twitter</a><a target="_blank" class="rss" href="{{ blogConf.site_url }}/rss.html" title="RSS 订阅">RSS</a><a class="search" href="/search.html" title="站内搜索">Search</a>
+						</div>
+					</nav>
+				</header>				
+			</div>
+		</div>
+		<div class="mid-col">
+			<div class="mid-col-container">
+				<div id="content" class="inner">

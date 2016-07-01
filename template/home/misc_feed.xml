@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>{{ blogConf.blog_name }}</title>
+        <link>{{ blogConf.site_protocol }}{{ blogConf.site_url }}</link>
+        <description>专注 WEB 端开发，关注 WEB 性能。</description>
+        <atom:link href="{{ blogConf.site_protocol }}{{ blogConf.site_url }}/rss.html" rel="self" />
+        <atom:link href="https://imququ.superfeedr.com/" rel="hub" />
+        <language>zh-cn</language>
+        <lastBuildDate>{{ now|date('ddd, DD MMM YYYY HH:mm:ss ZZ') }}</lastBuildDate>
+
+        {% for post in data %}
+        <item>
+            <title>{{ post.title }}</title>
+            <link>{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/{{ post.slug }}.html</link>
+            <description>{{ post.content }}{{ '<p>本文链接：<a href="' + blogConf.site_protocol + blogConf.site_url + '/post/' + post.slug + '.html">' + blogConf.site_protocol + blogConf.site_url + '/post/' + post.slug + '.html</a>，<a href="' + blogConf.site_protocol + blogConf.site_url + '/post/' + post.slug + '.html#comments" target="_blank">参与讨论</a></p>' }}</description>
+            <pubDate>{{ post.pub_date|date('ddd, DD MMM YYYY HH:mm:ss ZZ') }}</pubDate>
+            <guid>{{ blogConf.site_protocol }}{{ blogConf.site_url }}/post/{{ post.slug }}.html</guid>
+        </item>
+       {% endfor %}
+    </channel>
+</rss>

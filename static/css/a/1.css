@@ -1,0 +1,8 @@
+@charset "UTF-8";
+
+.avatar {
+	border:1px solid red;
+	background-image:url(../../img/a/ququ.jpg);
+}
+
+@import url("2.css");

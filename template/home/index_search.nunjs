@@ -1,0 +1,82 @@
+{% include 'home/inc/header.nunjs' %}	
+
+<article class="post post-search">
+	<h1 class="title">站内搜索</h1>
+	
+	<div class="entry-content">
+		<div id="search">
+			<form action="/search.html">
+				<div class="wrapper">
+					<input maxlength="80" placeholder="请输入关键字..." id="keyword" name="s" value="{{ keyword }}" type="search" required />
+				</div>
+				<input class="submit" type="submit" value="搜索" />
+			</form>
+		</div>
+
+		{% if searchData %}
+			<div id="searchResult">
+				{% if searchData.items.length %}
+					<div class="info">
+						本次搜索共找到结果 {{ searchData.count }} 条
+					</div>
+				{% endif %}
+				
+				{% if not searchData.items.length %}
+					<div class="no-result">没有找到任何结果，请更换查询词试试~</div>
+					<div class="item">
+						<div class="title">或者试试 Google 站内搜索： <a target="_blank" href="https://www.google.com/#q={{ ('site:imququ.com ' + keyword)|urlencode }}">site:imququ.com {{ keyword }}</a></div>
+					</div>
+				{% endif %}
+				
+				{% for item in searchData.items %}
+					<div class="item">
+						<div class="title"><a href="{{ item.link }}">{{ item.htmlTitle|safe }}</a></div>
+						<div class="desc">
+							{% if item.picture %}
+								<div class="img">
+									<img src="{{ item.picture }}" />
+								</div>
+							{% endif %}
+							<div class="summary">
+								{{ item.htmlSnippet|safe }}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<div id="searchResult">
+				<div class="hot-words">
+					热搜词：
+					{% for key in hotWords %}
+						<a href="?s={{ key|urlencode }}">{{ key }}</a>
+					{% endfor %}
+				</div>
+				<div class="intro">
+					<p>支持的搜索格式：</p>
+					<ol>
+						<li>输入关键词全文搜索：<a href="?s={{ ('HTTP/2 性能优化')|urlencode }}">HTTP/2 性能优化</a>；</li>
+						<li>指定时间段搜索：<a href="?s={{ ('date:2014')|urlencode }}">date:2014</a>、<a href="?s={{ ('date:2015-05')|urlencode }}">date:2015-05</a>；</li>
+						<li>指定标签搜索：<a href="?s={{ ('tag:性能优化')|urlencode }}">tag:性能优化</a>、<a href="?s={{ ('tag:HTTPS')|urlencode }}">tag:HTTPS</a>；</li>
+						<li>指定文章类型搜索：<a href="?s={{ ('type:page')|urlencode }}">type:page</a>、<a href="?s={{ ('type:post')|urlencode }}">type:post</a>；</li>
+						<li>组合搜索：<a href="?s={{ ('type:post date:2015 tag:HTTP 优化')|urlencode }}">type:post date:2015 tag:HTTP 优化</a>；</li>
+					</ol>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</article>
+
+{% if searchData and searchData.items.length and (searchData.prevPage or searchData.nextPage) %}
+	<nav class="page-navi">
+		{% if searchData.prevPage %}
+			<a href="{{ pagerPath }}start={{ searchData.prevPage }}" class="prev">&laquo; 上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		{% endif %}
+
+		{% if searchData.nextPage %}
+			<a href="{{ pagerPath }}start={{ searchData.nextPage }}" class="next">下一页 &raquo;</a>
+		{% endif %}
+	</nav>
+{% endif %}
+
+{% include 'home/inc/footer.nunjs' %}	

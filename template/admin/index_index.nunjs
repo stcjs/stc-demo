@@ -1,0 +1,55 @@
+{% extends 'admin/inc/base.nunjs' %}
+
+{% block content %}
+<div class="main">
+	<div class="container typecho-dashboard">
+		<div class="typecho-page-title">
+			<h2>网站概要</h2>
+		</div>
+		<div class="row typecho-page-main">
+			<div class="col-mb-12 welcome-board" role="main">
+				<p>
+					目前有&nbsp;<em>{{ postCount }}</em>&nbsp;篇文章，<em>{{ pageCount }}</em>&nbsp;个页面，<em>{{ pvSum }}</em>&nbsp;次浏览（2016-03-25 至今），并有&nbsp;<em>{{ commentSum }}</em>&nbsp;条评论。
+				</p>
+				<ul id="start-link" class="clearfix">
+					<li>
+						<a href="/admin/post/add/">撰写新文章</a>
+					</li>
+					<li>
+						<a href="/admin/post/list/">管理文章</a>
+					</li>
+					<li>
+						<a href="{{ blogConf.comment_admin_url }}" target="_blank">管理评论</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-mb-12 col-tb-4" role="complementary">
+				<section class="latest-link">
+					<h3>最近发布的文章</h3>
+					<ul>
+						{% for post in recentList %}
+						<li>
+							<span>{{ post.pub_date|date('MM-DD') }}</span>
+							<a target="_blank" href="/post/{{ post.slug }}.html" class="title">{{ post.title }}</a>
+						</li>
+						{% endfor %}
+					</ul>
+				</section>
+			</div>
+			<div class="col-mb-12 col-tb-6" role="complementary">
+				<section class="latest-link">
+					<h3>最近得到的回复</h3>
+					<ul>
+						{% for item in recentComment %}
+						<li>
+							<span>{{ item.createdAt|date('MM-DD') }}</span>
+							<a target="_blank" href="{{ item.link }}#comment-{{ item.id }}">{{ item.author_name }}</a>：{{ item.message|substr(0, 100)|safe }}
+						</li>
+						{% endfor %}
+					</ul>
+				</section>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

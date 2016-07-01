@@ -1,0 +1,40 @@
+<div class="typecho-pager">
+	<ul>
+		{% set pageUrl = pagerPath + 'pn=${page}' %}
+
+		{% if currentPage > 1 %}
+			<li class="prev"><a href="{{ pageUrl|replace('${page}', currentPage - 1) }}">上一页</a></li>
+		{% endif %}
+
+		{% if pagerPages[0] > 1 %}
+			<li><a href="{{ pageUrl|replace('${page}', 1) }}">1</a></li>
+		{% endif %}
+
+		{% if pagerPages[0] > 2 %}
+			<li class="disabled"><span>...</span></li>
+		{% endif %}
+		
+		{% for i in range(0, pagerPages.length) %}
+			{% set p = pagerPages[i] %}
+			{% if p == currentPage %}
+				<li class="current"><a href="{{ pageUrl|replace('${page}', p) }}">{{ p }}</a></li>
+			{% else %}
+				<li><a href="{{ pageUrl|replace('${page}', p) }}">{{ p }}</a></li>
+			{% endif %}
+		{% endfor %}
+
+		{% if pagerPages.length > 1 %}
+			{% set last = pagerPages[pagerPages.length - 1] %}
+			{% if last < totalPages - 1 %}
+				<li class="disabled"><span>...</span></li>
+			{% endif %}
+			{% if last < totalPages %}
+				<li><a href="{{ pageUrl|replace('${page}', totalPages) }}">{{ totalPages }}</a></li>
+			{% endif %}
+		{% endif %}
+
+		{% if currentPage < totalPages %}
+			<li class="next"><a href="{{ pageUrl|replace('${page}', currentPage + 1) }}">下一页</a></li>
+		{% endif %}
+	</ul>
+</div>
