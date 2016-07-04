@@ -31,7 +31,7 @@ stc.transpile({
 
 stc.workflow({
   // JSCompress: {plugin: uglify, include: /\.js$/},
-  CSSCombine: {plugin: cssCombine, include: /page\.css$/},
+  CSSCombine: {plugin: cssCombine, include: /\.css$/},
 });
 
 stc.start();
