@@ -15,5 +15,7 @@ module.exports = [
     "stc-replace",
     "stc-log",
     "stc-css-combine",
-    "stc-css-compress"
+    "stc-css-compress",
+    "stc-html-compress",
+    "stc-cdn"
 ]
