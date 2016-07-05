@@ -30,9 +30,10 @@ Promise.resolve()
 	.then(curryTask("Git Cloning or pulling", () => {
 		return Promise.all(modules.map((name) => {
 			return folderExistsPromise(name, true)
-				.then(() => execPromise('git branch | grep "* master" && git pull origin master', { cwd: name }).catch(() => {
-					console.log(`${name} is not on master branch, ignore.`)
-				}))
+				.then(() => execPromise('git branch | grep "* master"', { cwd: name })
+					.then(() => execPromise('git pull origin master', { cwd: name }))
+					.catch((err) => console.log(`${name}\t${String(err)}`))
+				)
 				.catch(() => execPromise(`git clone git@github.com:stcjs/${name}.git`));
 		}))
 	}))
