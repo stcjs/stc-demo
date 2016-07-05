@@ -2,7 +2,7 @@ const fs = require("fs"),
 	https = require('https'),
 	exec = require('child_process').exec,
 	STR_DASH = "========================================",
-	REG_LOCAL = /^stc[\w-]*$/,
+	REG_LOCAL = /^(stc[\w-]*|flkit)$/,
 	REG_DEMO_DIR = /stc-demo$/;
 
 var currentJob = "",
