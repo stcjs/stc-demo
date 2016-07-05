@@ -17,5 +17,6 @@ module.exports = [
     "stc-css-combine",
     "stc-css-compress",
     "stc-html-compress",
-    "stc-cdn"
+    "stc-cdn",
+    "flkit"
 ]
