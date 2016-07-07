@@ -1,6 +1,7 @@
 module.exports = [
     "stc",
     "stc-eslint",
+    "stc-js-combine",
     "stc-babel",
     "stc-typescript",
     "stc-uglify",
