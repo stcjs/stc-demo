@@ -20,5 +20,7 @@ module.exports = [
     "stc-html-compress",
     "stc-cdn",
     "stc-inline",
-    "flkit"
+    "flkit",
+    "stc-less",
+    "stc-empty-file"
 ]
