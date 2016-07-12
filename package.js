@@ -22,5 +22,6 @@ module.exports = [
     "stc-inline",
     "flkit",
     "stc-less",
-    "stc-empty-file"
+    "stc-empty-file",
+    "stc-localstorage"
 ]
