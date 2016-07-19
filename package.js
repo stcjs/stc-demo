@@ -1,6 +1,7 @@
 module.exports = [
     "stc",
     "stc-eslint",
+    "stc-csslint",
     "stc-js-combine",
     "stc-babel",
     "stc-typescript",
@@ -24,6 +25,6 @@ module.exports = [
     "stc-less",
     "stc-empty-file",
     "stc-localstorage",
-    "stc-move",
+    "stc-move-file",
     "stc-await"
 ]
