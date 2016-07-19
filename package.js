@@ -23,5 +23,7 @@ module.exports = [
     "flkit",
     "stc-less",
     "stc-empty-file",
-    "stc-localstorage"
+    "stc-localstorage",
+    "stc-move",
+    "stc-await"
 ]
