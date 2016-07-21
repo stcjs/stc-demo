@@ -1,6 +1,7 @@
 module.exports = [
     "stc",
     "stc-eslint",
+    "stc-csslint",
     "stc-js-combine",
     "stc-babel",
     "stc-typescript",
@@ -28,6 +29,6 @@ module.exports = [
     "stc-localstorage-php",
     "stc-localstorage-ejs",
     "stc-localstorage-nunjucks",
-    "stc-move",
+    "stc-move-file",
     "stc-await"
 ]
