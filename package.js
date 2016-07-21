@@ -24,6 +24,10 @@ module.exports = [
     "stc-less",
     "stc-empty-file",
     "stc-localstorage",
+    "stc-localstorage-smarty",
+    "stc-localstorage-php",
+    "stc-localstorage-ejs",
+    "stc-localstorage-nunjucks",
     "stc-move",
     "stc-await"
 ]
