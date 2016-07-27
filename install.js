@@ -44,7 +44,7 @@ Promise.resolve()
 	.then(curryTask("Making symbol link for stc projects in node_modules", () => {
 		return Promise.all(modules.map((name) => {
 			return folderExistsPromise(`node_modules/${name}`)
-				.catch(() => execPromise(`ln -s ../${name} ${name}`, {
+				.catch(() => execPromise(/^win/.test(process.platform) ? `mklink /J ${name} "../${name}"` : `ln -s ../${name} ${name}`, {
 					cwd: `node_modules`
 				}));
 		}));
