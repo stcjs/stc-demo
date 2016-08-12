@@ -30,5 +30,6 @@ module.exports = [
     "stc-localstorage-ejs",
     "stc-localstorage-nunjucks",
     "stc-move-file",
-    "stc-await"
+    "stc-await",
+    "stc-copy-file"
 ]
